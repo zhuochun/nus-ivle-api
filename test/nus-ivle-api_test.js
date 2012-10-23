@@ -173,4 +173,55 @@
         equal(ajax.count(), 2, "call to get email -> ajax count = 2");
     });
 
+    module("ivle.User.Modules", {
+        setup: function() {
+            // save a copy of the actual $.ajax
+            _ajax = $.ajax;
+            // keep a count
+            var count = 0;
+            // customized ajax
+            function ajax(url) {
+                count++;
+
+                this.count = function() { return count; };
+
+                this.success = function(callback) {
+                    callback($.extend({"Comments": "Valid login!", "Results": [{"url": url}]}));
+                };
+
+                this.error = function(callback) {
+                    callback(url);
+                };
+            }
+            // substitude $.ajax with another one
+            $.ajax = function(options) {
+                return new ajax(options.url);
+            };
+
+            // create a user
+            userA = (new ivle("key").User("token"));
+        },
+        teardown: function() {
+            // return the original ajax
+            $.ajax = _ajax;
+            // destroy user
+            userA = undefined;
+        }
+    });
+
+    test("get user modules", function() {
+        var ajax = $.ajax({url:"empty"});
+
+        equal(ajax.count(), 1, "starting ajax count = 1");
+
+        userA.modules(function(data) {
+            equal(data.length, 1, "get one module");
+            equal(data[0]._data.url,
+                "https://ivle.nus.edu.sg/api/lapi.svc/Modules?APIKey=key&AuthToken=token&Duration=10&IncludeAllInfo=true&output=json",
+                "get user modules url");
+        });
+
+        equal(ajax.count(), 2, "call to get modules -> ajax count = 2");
+    });
+
 }(jQuery));

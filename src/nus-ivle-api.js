@@ -34,7 +34,10 @@
                         "&output=json";
         },
 
-    // Define ivle finally
+/* ========================================
+ * Define ivle
+ * ======================================== */
+
         ivle = function(key) {
             this.KEY = key;
         };
@@ -72,7 +75,10 @@
         }
     };
 
-    // Define a User
+/* ========================================
+ * Define User
+ * ======================================== */
+
     function User(key, token) {
         this.KEY = key;
         this.TOKEN = token;
@@ -125,19 +131,37 @@
         },
 
         modules: function(callback, options) {
-            var opt = $.extend({"Duration": 10, "IncludeAllInfo": true}, options);
+            var self = this,
+                opt = $.extend({"Duration": 10, "IncludeAllInfo": true}, options);
 
-            this._get("Modules", options).success(function(data) {
-                callback(data);
+            this._get("Modules", opt).success(function(data) {
+                var m, modules = [];
+
+                if (data.Comments == "Valid login!") {
+                    for (m in data.Results) {
+                        modules.push(new Module(self, data.Results[m]));
+                    }
+                }
+
+                callback(modules);
             });
         }
     };
 
-    // Define a module
-    function module(key, token, data) {
+/* ========================================
+ * Define Module
+ * ======================================== */
 
+    function Module(user, data) {
+        this._user = user;
+        this._data = data;
     }
 
+
+
+/* ========================================
+ * Last Chapter
+ * ======================================== */
     
     // Expose ivle to the global object
     window.ivle = ivle;
