@@ -78,6 +78,43 @@
         this.TOKEN = token;
     }
 
+    User.prototype = {
+        constructor: User,
+
+        _get: function(api, params) {
+            return jsonp(uri(this.KEY, this.TOKEN, api, params));
+        },
+
+        _identity: function(api, local, callback) {
+            var self = this;
+            // if cached variable
+            if (this[local]) {
+                callback(this[local]);
+            } else {
+                this._get(api).success(function(data) {
+                    callback((self[local] = data));
+                });
+            }
+        },
+
+        id: function(callback) {
+            this._identity("UserID_Get", "_id", callback);
+        },
+
+        name: function(callback) {
+            this._identity("UserName_Get", "_name", callback);
+        },
+
+        email: function(callback) {
+            this._identity("UserEmail_Get", "_email", callback);
+        }
+    };
+
+    // Define a module
+    function module(key, token, data) {
+
+    }
+
     
     // Expose ivle to the global object
     window.ivle = ivle;

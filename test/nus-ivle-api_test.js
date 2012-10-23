@@ -38,8 +38,8 @@
 
     test("ivle login will return the login url", function() {
         equal(ivle.login("a", "url"),
-                "https://ivle.nus.edu.sg/api/login/?apikey=a&url=url",
-                "return valid login url");
+            "https://ivle.nus.edu.sg/api/login/?apikey=a&url=url",
+            "return valid login url");
     });
 
     module("ivle (user generate)");
@@ -49,6 +49,111 @@
 
         equal(user.KEY, "key", "user will has the key");
         equal(user.TOKEN, "token", "user will has the auth token");
+    });
+
+    var userA, _ajax;
+
+    module("user identities", {
+        setup: function() {
+            // save a copy of the actual $.ajax
+            _ajax = $.ajax;
+            // keep a count
+            var count = 0;
+            // customized ajax
+            function ajax(url) {
+                count++;
+
+                this.count = function() { return count; };
+
+                this.success = function(callback) {
+                    callback(url);
+                };
+
+                this.error = function(callback) {
+                    callback(url);
+                };
+            }
+            // substitude $.ajax with another one
+            $.ajax = function(options) {
+                return new ajax(options.url);
+            };
+
+            // create a user
+            userA = (new ivle("key").User("token"));
+        },
+        teardown: function() {
+            // return the original ajax
+            $.ajax = _ajax;
+            // destroy user
+            userA = undefined;
+        }
+    });
+
+    test("get user id", function() {
+        var ajax = $.ajax({url:"empty"});
+
+        equal(ajax.count(), 1, "starting ajax count = 1");
+
+        // user id
+        userA.id(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserID_Get?APIKey=key&Token=token&output=json",
+                "get user id");
+        });
+
+        equal(ajax.count(), 2, "call to get id -> ajax count = 2");
+
+        userA.id(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserID_Get?APIKey=key&Token=token&output=json",
+                "get user id again");
+        });
+
+        equal(ajax.count(), 2, "call to get id is cached -> ajax count = 2");
+    });
+
+    test("get user name", function() {
+        var ajax = $.ajax({url:"empty"});
+
+        equal(ajax.count(), 1, "starting ajax count = 1");
+
+        userA.name(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserName_Get?APIKey=key&Token=token&output=json",
+                "get user name");
+        });
+
+        equal(ajax.count(), 2, "call to get name -> ajax count = 2");
+
+        userA.name(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserName_Get?APIKey=key&Token=token&output=json",
+                "get user name again");
+        });
+
+        equal(ajax.count(), 2, "call to get name is cached -> ajax count = 2");
+    });
+
+    test("get user email", function() {
+        var ajax = $.ajax({url:"empty"});
+
+        equal(ajax.count(), 1, "starting ajax count = 1");
+
+        userA.email(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserEmail_Get?APIKey=key&Token=token&output=json",
+                "get user email");
+        });
+
+        equal(ajax.count(), 2, "call to get email -> ajax count = 2");
+
+        userA.email(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/UserEmail_Get?APIKey=key&Token=token&output=json",
+                "get user email again");
+        });
+
+        equal(ajax.count(), 2, "call to get email -> ajax count = 2");
     });
 
 }(jQuery));
