@@ -85,12 +85,33 @@
         equal(user.TOKEN, "token", "user will has the auth token");
     });
 
+    test("validate user token", function() {
+        // customized ajax for validation
+        function ajax(url) {
+            this.success = function(callback) {
+                callback({Success: url, Token: "newToken"});
+            };
+        }
+        // substitude $.ajax with another one
+        $.ajax = function(options) {
+            return new ajax(options.url);
+        };
+
+        userA.validate(function(data) {
+            equal(data,
+                "https://ivle.nus.edu.sg/api/lapi.svc/Validate?APIKey=key&Token=token&output=json",
+                "validate user token");
+
+        });
+
+        equal(userA.TOKEN, "newToken", "token is updated after Validation");
+    });
+
     test("get user id", function() {
         var ajax = $.ajax({url:"empty"});
 
         equal(ajax.count(), 1, "starting ajax count = 1");
 
-        // user id
         userA.id(function(data) {
             equal(data,
                 "https://ivle.nus.edu.sg/api/lapi.svc/UserID_Get?APIKey=key&Token=token&output=json",

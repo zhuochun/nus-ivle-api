@@ -97,6 +97,21 @@
             }
         },
 
+        validate: function(callback) {
+            // TODO add expireDay ==> ValidTill
+            var self = this;
+
+            this._get("Validate").success(function(data) {
+                if (data.Success) {
+                    if (data.Token != self.TOKEN) {
+                        self.TOKEN = data.Token;
+                    }
+                }
+
+                callback(data.Success);
+            });
+        },
+
         id: function(callback) {
             this._identity("UserID_Get", "_id", callback);
         },
@@ -107,6 +122,14 @@
 
         email: function(callback) {
             this._identity("UserEmail_Get", "_email", callback);
+        },
+
+        modules: function(callback, options) {
+            var opt = $.extend({"Duration": 10, "IncludeAllInfo": true}, options);
+
+            this._get("Modules", options).success(function(data) {
+                callback(data);
+            });
         }
     };
 
