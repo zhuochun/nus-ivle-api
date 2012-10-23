@@ -22,13 +22,11 @@
     raises(block, [expected], [message])
     */
 
-    module("ivle (initialization)");
+    module("ivle base");
 
     test("ivle is added into window", function() {
         notEqual(window.ivle, undefined, "should be defined");
     });
-
-    module("ivle (static methods)");
 
     test("ivle getToken will return the token from string", function() {
         equal(ivle.getToken("aaa"), undefined, "invalid token will return undefined");
@@ -42,18 +40,9 @@
             "return valid login url");
     });
 
-    module("ivle (user generate)");
-    
-    test("ivle get user", function() {
-        var user = (new ivle("key")).User("token");
-
-        equal(user.KEY, "key", "user will has the key");
-        equal(user.TOKEN, "token", "user will has the auth token");
-    });
-
     var userA, _ajax;
 
-    module("user identities", {
+    module("ivle.User", {
         setup: function() {
             // save a copy of the actual $.ajax
             _ajax = $.ajax;
@@ -87,6 +76,13 @@
             // destroy user
             userA = undefined;
         }
+    });
+
+    test("ivle can create user", function() {
+        var user = (new ivle("key")).User("token");
+
+        equal(user.KEY, "key", "user will has the key");
+        equal(user.TOKEN, "token", "user will has the auth token");
     });
 
     test("get user id", function() {
