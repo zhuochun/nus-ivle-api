@@ -39,9 +39,15 @@
  * Define ivle
  * ======================================== */
 
-        ivle = function(key) {
-            this.KEY = key;
-        };
+        ivle;
+
+    // The top-level namespace. All public classes and modules will
+    // be attached to this. Exported for both CommonJS and the browser.
+    if (typeof exports !== 'undefined') {
+        ivle = exports;
+    } else {
+        ivle = window.ivle = {};
+    }
 
     // Current version of the library. Keep in sync with `package.json`.
     ivle.VERSION = '0.1.0';
@@ -58,22 +64,14 @@
         return token;
     };
 
+    // get the login url
     ivle.login = function(key, redirectUrl) {
         return baseUrl + "login/?apikey=" + key + "&url=" + encodeURIComponent(redirectUrl);
     };
 
-    ivle.prototype = {
-        constructor: ivle,
-
-        login: function(redirectUrl) {
-            return ivle.login(this.KEY, redirectUrl);
-        },
-
-        getToken: ivle.getToken,
-
-        User: function(authToken) {
-            return new User(this.KEY, authToken);
-        }
+    // generate user
+    ivle.User = function(key, token) {
+        return new User(key, token);
     };
 
 /* ========================================
@@ -283,18 +281,6 @@
 
     for (i in listB) {
         Module.prototype[listB[i].api] = bfun(listB[i]);
-    }
-
-/* ========================================
- * Last Chapter
- * ======================================== */
-    
-    // Expose ivle to the global object
-    // for CommonJS enviroments, export everything
-    if ( typeof exports !== "undefined" || typeof require !== "undefined" ) {
-        $.extend(exports, ivle);
-    } else {
-        window.ivle = ivle;
     }
 
 })(jQuery, window);

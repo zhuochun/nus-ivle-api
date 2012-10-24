@@ -68,7 +68,7 @@
             };
 
             // create a user
-            userA = (new ivle("key").User("token"));
+            userA = ivle.User("key", "token");
         },
         teardown: function() {
             // return the original ajax
@@ -79,7 +79,7 @@
     });
 
     test("ivle can create user", function() {
-        var user = (new ivle("key")).User("token");
+        var user = ivle.User("key", "token");
 
         equal(user.KEY, "key", "user will has the key");
         equal(user.TOKEN, "token", "user will has the auth token");
@@ -246,7 +246,7 @@
             };
 
             // create a user
-            userA = (new ivle("key").User("token"));
+            userA = ivle.User("key", "token");
             // create a module
             modA  = userA.Module({"ID":123});
         },
