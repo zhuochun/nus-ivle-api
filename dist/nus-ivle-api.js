@@ -1,10 +1,6 @@
-/*
- * nus-ivle-api
- * https://github.com/Zhuochun/nus-ivle-api
- *
- * Copyright (c) 2012 Zhuochun
- * Licensed under the MIT license.
- */
+/*! NUS IVLE API JavaScript SDK - v0.1.0 - 2012-10-25
+* https://github.com/Zhuochun/nus-ivle-api
+* Copyright (c) 2012 Wang Zhuochun; Licensed MIT */
 
 (function($, window, undefined) {
 
