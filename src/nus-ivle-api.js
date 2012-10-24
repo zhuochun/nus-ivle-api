@@ -10,6 +10,7 @@
 
     "use strict";
     /*jshint jquery:true, laxcomma:true, maxerr:50 */
+    /*global exports*/
 
     // The base and api URL of IAPI
     var baseUrl = "https://ivle.nus.edu.sg/api/",
@@ -104,12 +105,11 @@
         },
 
         validate: function(callback) {
-            // TODO add expireDay ==> ValidTill
             var self = this;
 
             this._get("Validate").success(function(data) {
                 if (data.Success) {
-                    if (data.Token != self.TOKEN) {
+                    if (data.Token !== self.TOKEN) {
                         self.TOKEN = data.Token;
                     }
                 }
@@ -130,14 +130,23 @@
             this._identity("UserEmail_Get", "_email", callback);
         },
 
-        modules: function(callback, options) {
+        Module: function(data) {
+            return new Module(this, data);
+        },
+
+        modules: function(options, callback) {
+            if ($.isFunction(options)) {
+                callback = options;
+                options  = {};
+            }
+
             var self = this,
                 opt = $.extend({"Duration": 10, "IncludeAllInfo": true}, options);
 
             this._get("Modules", opt).success(function(data) {
                 var m, modules = [];
 
-                if (data.Comments == "Valid login!") {
+                if (data.Comments === "Valid login!") {
                     for (m in data.Results) {
                         modules.push(new Module(self, data.Results[m]));
                     }
@@ -145,6 +154,33 @@
 
                 callback(modules);
             });
+        },
+
+        unreadAnnouncements: function(callback) {
+            this._get("Announcements_Unread", {TitleOnly: false}).success(callback);
+        },
+
+        search: function(type, q, callback) {
+            var opt = $.extend({IncludeAllInfo: true}, q);
+
+            if (type === "Modules") {
+                this._get("Modules_Search", opt).success(callback);
+            } else {
+                callback(null);
+            }
+        },
+
+        download: function(file) {
+            var url = baseUrl + "downloadfile.ashx?APIKey=" + this.KEY + 
+                    "&AuthToken=" + this.TOKEN + "&target=workbin&ID=";
+
+            if (typeof file === "string") {
+                return url + file;
+            } else if (file.ID) {
+                return url + file.ID;
+            } else {
+                return null;
+            }
         }
     };
 
@@ -155,15 +191,111 @@
     function Module(user, data) {
         this._user = user;
         this._data = data;
+        this._lastUpdate = new Date();
     }
 
+    Module.prototype = {
+        constructor: Module,
 
+        get: function(key) {
+            return this._data[key];
+        },
+
+        update: function() {
+            var self = this,
+                minute = 0 | ((new Date() - this._lastUpdate) / 1000 / 60);
+
+            if (minute > 0) {
+                this._user._get("Module", {
+                    Duration: minute,
+                    IncludeAllInfo: true,
+                    CourseID: self.get("ID"),
+                    TitleOnly: false
+                }).success(function(data) {
+                    if (data.Comments === "Valid login!") {
+                        self._lastUpdate = new Date();
+                        self._data = data.Results[0];
+                    }
+                });
+            }
+        },
+
+        gradebook: function(callback) {
+            var self = this;
+
+            this._user._get("Gradebook_ViewItems", {
+                CourseID: self.get("ID")
+            }).success(function(data) {
+                if (data.Comments === "Valid login!") {
+                    callback(data.Results);
+                } else {
+                    callback(null);
+                }
+            });
+        }
+    };
+
+    var i,
+        listA = "information weblinks readingFormatted readingUnformatted reading".split(" "),
+        afun  = function(type) {
+            return function(callback) {
+                var self = this;
+
+                this._user._get("Module_" + type, {
+                    CourseID: self.get("ID")
+                }).success(function(data) {
+                    if (data.Comments === "Valid login!") {
+                        callback(data.Results);
+                    } else {
+                        callback(null);
+                    }
+                });
+            };
+        };
+
+    for (i in listA) {
+        Module.prototype[listA[i]] = afun(listA[i]);
+    }
+
+    var listB = [
+            {api: "announcements", "options": {Duration: 0, TitleOnly: false}},
+            {api: "workbins", "options": {Duration: 0, TitleOnly: false}},
+            {api: "forums", "options": {Duration: 0, IncludeThreads: true, TitleOnly: false}},
+            {api: "webcasts", "options": {Duration: 0}}
+        ],
+        bfun = function(key) {
+            return function(options, callback) {
+                if ($.isFunction(options)) {
+                    callback = options;
+                    options  = {};
+                }
+
+                var self = this,
+                    opt = $.extend({CourseID: self.get("ID")}, key.options, options); 
+
+                this._user._get(key.api, opt).success(function(data) {
+                    if (data.Comments === "Valid login!") {
+                        callback(data.Results);
+                    }
+                });
+            };
+        };
+
+    for (i in listB) {
+        Module.prototype[listB[i].api] = bfun(listB[i]);
+    }
 
 /* ========================================
  * Last Chapter
  * ======================================== */
     
     // Expose ivle to the global object
-    window.ivle = ivle;
+    // for CommonJS enviroments, export everything
+    if ( typeof exports !== "undefined" || typeof require !== "undefined" ) {
+        $.extend(exports, ivle);
+    } else {
+        window.ivle = ivle;
+    }
+
 
 })(jQuery, window);

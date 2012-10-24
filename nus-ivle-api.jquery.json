@@ -1,11 +1,11 @@
 {
   "name": "nus-ivle-api",
   "title": "NUS IVLE API JavaScript SDK",
-  "description": "JavaScript SDK for NUS IVLE API",
+  "description": "a JavaScript SDK for NUS IVLE API (http://wiki.nus.edu.sg/display/ivlelapi/Home)",
   "version": "0.1.0",
   "homepage": "https://github.com/Zhuochun/nus-ivle-api",
   "author": {
-    "name": "Zhuochun",
+    "name": "Wang Zhuochun",
     "email": "stone1551@gmail.com"
   },
   "repository": {
