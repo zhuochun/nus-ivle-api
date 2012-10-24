@@ -1,6 +1,6 @@
 # NUS IVLE API JavaScript SDK
 
-JavaScript SDK for NUS IVLE API
+a JavaScript SDK for NUS IVLE API
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
@@ -14,8 +14,9 @@ In your web page:
 <script src="jquery.js"></script>
 <script src="dist/nus-ivle-api.min.js"></script>
 <script>
-jQuery(function($) {
-  $.awesome(); // "awesome"
+$(function($) {
+  var key = "YOUR KEY", token = "USER TOKEN",
+      user = ivle.User(key, token);
 });
 </script>
 ```
@@ -23,14 +24,11 @@ jQuery(function($) {
 ## Documentation
 _(Coming soon)_
 
-## Examples
-_(Coming soon)_
-
 ## Release History
 _(Nothing yet)_
 
 ## License
-Copyright (c) 2012 Zhuochun  
+Copyright (c) 2012 Wang Zhuochun  
 Licensed under the MIT license.
 
 ## Contributing
