@@ -216,11 +216,12 @@ $(function() {
                         if (typeof output === "string") {
                             self.$result.html(output);
                         } else {
-                            if ($.isArray(output) && output.length > 0)
+                            if ($.isArray(output) && output.length > 0) {
                                 output = output[0];
+                            }
 
-                            self.$result.html(prettyObj(
-                                JSON.parse(JSON.stringify(output)),
+                            self.$result.html(prettyObj(output,
+                                //JSON.parse(JSON.stringify(output)),
                                 {expanded: false, maxDepth: 20}));
                         }
                     });
