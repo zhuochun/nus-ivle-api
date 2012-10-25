@@ -155,7 +155,14 @@
         },
 
         unreadAnnouncements: function(callback) {
-            this._get("Announcements_Unread", {TitleOnly: false}).success(callback);
+            this._get("Announcements_Unread", {TitleOnly: false})
+                .success(function(data) {
+                    if (data.Comments === "Valid login!") {
+                        callback(data.Results);
+                    } else {
+                        callback([]);
+                    }
+                });
         },
 
         search: function(type, q, callback) {
