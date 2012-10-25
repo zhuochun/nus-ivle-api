@@ -37,8 +37,8 @@
 
     // Get the result [] from data, null if comments is invalid
         getResult = function(data) {
-            if (data.Comments === "Valid login!"
-            /* || data.Comments === "" // in WebCasts/Workbin return empty string! */) {
+            if (data.Comments === "Valid login!" ||
+                data.Comments === "" /* in WebCasts/Workbin return empty string! */) {
                 return data.Results;
             } else {
                 return null;

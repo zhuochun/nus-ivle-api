@@ -22,10 +22,12 @@ $(function($) {
 ```
 
 ## Documentation
-_(Coming soon)_
+
+Visit [Page](http://zhuochun.github.com/nus-ivle-api).
 
 ## Release History
-_(Nothing yet)_
+
++ Version 0.2.0 First Release -> 26/Oct/2012
 
 ## License
 Copyright (c) 2012 Wang Zhuochun  

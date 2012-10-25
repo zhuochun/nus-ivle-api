@@ -1,4 +1,4 @@
-/*! NUS IVLE API JavaScript SDK - v0.1.0 - 2012-10-25
+/*! NUS IVLE API JavaScript SDK - v0.2.0 - 2012-10-26
 * https://github.com/Zhuochun/nus-ivle-api
 * Copyright (c) 2012 Wang Zhuochun; Licensed MIT */
 
@@ -31,6 +31,16 @@
                         "&output=json";
         },
 
+    // Get the result [] from data, null if comments is invalid
+        getResult = function(data) {
+            if (data.Comments === "Valid login!" ||
+                data.Comments === "" /* in WebCasts/Workbin return empty string! */) {
+                return data.Results;
+            } else {
+                return null;
+            }
+        },
+
 /* ========================================
  * Define ivle
  * ======================================== */
@@ -46,7 +56,7 @@
     }
 
     // Current version of the library. Keep in sync with `package.json`.
-    ivle.VERSION = '0.1.0';
+    ivle.VERSION = '0.2.0';
 
     // Get the token string from window.location
     ivle.getToken = function(href) {
@@ -92,7 +102,7 @@
             if (this[local]) {
                 callback(this[local]);
             } else {
-                this._get(api).success(function(data) {
+                return this._get(api).success(function(data) {
                     callback((self[local] = data));
                 });
             }
@@ -101,13 +111,10 @@
         validate: function(callback) {
             var self = this;
 
-            this._get("Validate").success(function(data) {
-                if (data.Success) {
-                    if (data.Token !== self.TOKEN) {
-                        self.TOKEN = data.Token;
-                    }
+            return this._get("Validate").success(function(data) {
+                if (data.Success && data.Token !== self.TOKEN) {
+                    self.TOKEN = data.Token;
                 }
-
                 callback(data.Success);
             });
         },
@@ -135,30 +142,37 @@
             }
 
             var self = this,
-                opt = $.extend({"Duration": 10, "IncludeAllInfo": true}, options);
+                opt = $.extend({Duration: 0, IncludeAllInfo: true}, options);
 
             this._get("Modules", opt).success(function(data) {
-                var m, modules = [];
+                var m, modules = [], result = getResult(data);
 
-                if (data.Comments === "Valid login!") {
-                    for (m in data.Results) {
-                        modules.push(new Module(self, data.Results[m]));
+                if (result) {
+                    for (m in result) {
+                        modules.push(new Module(self, result[m]));
                     }
-                }
 
-                callback(modules);
+                    callback(modules);
+                } else {
+                    callback(result);
+                }
             });
         },
 
         unreadAnnouncements: function(callback) {
-            this._get("Announcements_Unread", {TitleOnly: false}).success(callback);
+            this._get("Announcements_Unread", {TitleOnly: false})
+                .success(function(data) {
+                    callback(getResult(data));
+                });
         },
 
         search: function(type, q, callback) {
             var opt = $.extend({IncludeAllInfo: true}, q);
 
             if (type === "Modules") {
-                this._get("Modules_Search", opt).success(callback);
+                this._get("Modules_Search", opt).success(function(data) {
+                    callback(getResult(data));
+                });
             } else {
                 callback(null);
             }
@@ -196,68 +210,50 @@
         },
 
         update: function() {
-            var self = this,
-                minute = 0 | ((new Date() - this._lastUpdate) / 1000 / 60);
+            var self = this;
 
-            if (minute > 0) {
-                this._user._get("Module", {
-                    Duration: minute,
-                    IncludeAllInfo: true,
-                    CourseID: self.get("ID"),
-                    TitleOnly: false
-                }).success(function(data) {
-                    if (data.Comments === "Valid login!") {
-                        self._lastUpdate = new Date();
-                        self._data = data.Results[0];
-                    }
-                });
-            }
+            this._user._get("Module", {
+                Duration: 0,
+                IncludeAllInfo: true,
+                CourseID: self.get("ID"),
+                TitleOnly: false
+            }).success(function(data) {
+                var result = getResult(data);
+
+                if (result && result.length > 0) {
+                    self._lastUpdate = new Date();
+                    self._data = data.Results[0];
+                }
+            });
         },
 
-        gradebook: function(callback) {
+        gradebooksAsync: function(callback) {
             var self = this;
 
             this._user._get("Gradebook_ViewItems", {
                 CourseID: self.get("ID")
             }).success(function(data) {
-                if (data.Comments === "Valid login!") {
-                    callback(data.Results);
-                } else {
-                    callback(null);
-                }
+                callback(getResult(data));
             });
         }
     };
 
-    var i,
-        listA = "information weblinks readingFormatted readingUnformatted reading".split(" "),
-        afun  = function(type) {
-            return function(callback) {
-                var self = this;
+    var modInfos = "announcements forums workbins webcasts gradebooks polls webLinks lecturers descriptions".split(" "),
+        capitalize = function(str) { return str.slice(0,1).toUpperCase() + str.slice(1); },
+        i, extendMod = function(key) { return function() { return this.get(key); }; };
 
-                this._user._get("Module_" + type, {
-                    CourseID: self.get("ID")
-                }).success(function(data) {
-                    if (data.Comments === "Valid login!") {
-                        callback(data.Results);
-                    } else {
-                        callback(null);
-                    }
-                });
-            };
-        };
-
-    for (i in listA) {
-        Module.prototype[listA[i]] = afun(listA[i]);
+    for (i in modInfos) {
+        Module.prototype[modInfos[i].toLowerCase()] =
+            extendMod.apply(Module.prototype, [capitalize(modInfos[i])]);
     }
 
-    var listB = [
+    var modApi = [
             {api: "announcements", "options": {Duration: 0, TitleOnly: false}},
-            {api: "workbins", "options": {Duration: 0, TitleOnly: false}},
+            {api: "workbins", "options": {Duration: 0, TitleOnly: false, WorkbinID: ""}},
             {api: "forums", "options": {Duration: 0, IncludeThreads: true, TitleOnly: false}},
             {api: "webcasts", "options": {Duration: 0}}
         ],
-        bfun = function(key) {
+        asyncFun = function(i) {
             return function(options, callback) {
                 if ($.isFunction(options)) {
                     callback = options;
@@ -265,18 +261,17 @@
                 }
 
                 var self = this,
-                    opt = $.extend({CourseID: self.get("ID")}, key.options, options); 
+                    opt = $.extend({CourseID: self.get("ID")}, i.options, options); 
 
-                this._user._get(key.api, opt).success(function(data) {
-                    if (data.Comments === "Valid login!") {
-                        callback(data.Results);
-                    }
+                this._user._get(capitalize(i.api), opt).success(function(data) {
+                    callback(getResult(data));
                 });
             };
         };
 
-    for (i in listB) {
-        Module.prototype[listB[i].api] = bfun(listB[i]);
+    for (i in modApi) {
+        Module.prototype[modApi[i].api + "Async"] = 
+            asyncFun.apply(Module.prototype, [modApi[i]]);
     }
 
 })(jQuery, window);

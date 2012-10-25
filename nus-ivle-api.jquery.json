@@ -2,7 +2,7 @@
   "name": "nus-ivle-api",
   "title": "NUS IVLE API JavaScript SDK",
   "description": "a JavaScript SDK for NUS IVLE API (http://wiki.nus.edu.sg/display/ivlelapi/Home)",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/Zhuochun/nus-ivle-api",
   "author": {
     "name": "Wang Zhuochun",
