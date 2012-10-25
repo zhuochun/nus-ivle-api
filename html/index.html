@@ -16,10 +16,38 @@
       h2 { color: #1570A6; }
       blockquote { color: #0072C6; }
       .section { padding: 30px 0 10px; }
+      .result {
+        position: relative;
+        margin: 18px 0 15px;
+        padding: 39px 19px 14px;
+        *padding-top: 19px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        -webkit-border-radius: 4px;
+           -moz-border-radius: 4px;
+                border-radius: 4px;
+      }
+      .result:after {
+        content: "Result";
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        padding: 3px 7px;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        color: #9da0a4;
+        -webkit-border-radius: 4px 0 4px 0;
+         -moz-border-radius: 4px 0 4px 0;
+              border-radius: 4px 0 4px 0;
+      }
+      .result-holder { color: #aaa; }
       #footer { padding: 30px 0 30px; }
       #footer .center { text-align: center; color: #888; }
     </style>
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="js/prettify/prettify.css" rel="stylesheet">
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="favicon.ico">
@@ -63,70 +91,177 @@
 
         <blockquote style="font-size:18px">Make things as simple as possible, but not simpler.</blockquote>
 
-        <div id="overview" class="section">
+        <div id="overview_sec" class="section">
           <h2>Overview</h2>
 
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
+          <p>This is a JavaScript SDK for NUS IVLE APIs.</p>
+
+          <p>Currently, Supported APIs inlcude:</p>
+
+          <ul>
+              <li>Module</li>
+              <li>Module</li>
+              <li>Module</li>
+              <li>Module</li>
+          </ul>
         </div> <!-- #overview -->
 
-        <div id="download" class="section">
+        <div id="download_sec" class="section">
           <h2>Download</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
         </div> <!-- #download -->
 
-        <div id="ivle" class="section">
+        <div id="ivle_sec" class="section">
           <h2>ivle</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
+          <h3>Login</h3>
+          <div class="demo" id="demo-login">
+<pre class="prettyprint linenums">ivle.login(key, redirectUrl); // return the login url</pre>
+            <div class="btn-group">
+              <button class="btn btn-primary btn-run">Run</button>
+              <button class="btn btn-primary btn-console">Run in Console</button>
+            </div>
+            <div class="result">
+                <span class="result-holder">// result here</span>
+            </div>
+          </div>
+          <h3>Get Token</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">ivle.getToken([url]); // return the token if it is found in location.href/url</pre>
+          </div>
         </div><!-- #ivle -->
 
-        <div id="user" class="section">
+        <div id="user_sec" class="section">
           <h2>User</h2>
-
+          <h3>Initial User</h3>
           <div class="demo">
-            <button id="username">Get Username</button>
-
-            <div class="result">
-            </div>
+<pre class="prettyprint linenums">var user = ivle.User(key, token); // return a User instance</pre>
           </div>
 
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
+          <h3>Validate User</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">user.validate(function(result) {
+    // result = true/false
+});</pre>
+          </div>
+
+          <h3>Get User Identities</h3>
+          <h4>Username</h4>
+          <div class="demo">
+<pre class="prettyprint linenums">user.name(function(username) {
+    // username = "WANG ZHUOCHUN"
+});</pre>
+          </div>
+          <h4>Matric Number</h4>
+          <div class="demo">
+<pre class="prettyprint linenums">user.id(function(id) {
+    // id = "A0000000"
+});</pre>
+          </div>
+          <h4>Email Address</h4>
+          <div class="demo">
+<pre class="prettyprint linenums">user.email(function(email) {
+    // email = "xxx@nus.edu.sg"
+});</pre>
+          </div>
+
+          <h3>Unread Announcements</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">user.unreadAnnouncements(function(anns) {
+    // anns = [...]
+});</pre>
+          </div>
+
+          <h3>Search</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">var type = "Modules", q = {AcadYear: "2012/2013", Semester: 2};
+user.search(type, q, function(result) {
+    // result = [...]
+});</pre>
+            <p>Allowed Query Params:</p>
+<pre class="prettyprint linenums">// must have at least one query param in search
+q = {
+    ModuleCode: "ACC1002" // String
+  , ModuleTitle: "Financial" // String
+  , LecturerName: "XXX" // String
+  , Department: "Arts" // String
+  , Semester: "1" // String
+  , AcadYear: "2012/2013" // String
+  , ModNameExact: false // Boolean
+  , LecNameExact: false // Boolean
+};</pre>
+
+            <ul>
+            </ul>
+          </div>
         </div> <!-- #user -->
 
-        <div id="modules" class="section">
-          <h2>Module</h2>
+        <div id="modules_sec" class="section">
+          <h2>Modules</h2>
 
+          <h3>Getting the Modules</h3>
           <div class="demo">
-            <button id="get-modules">Get Modules</button>
-
-            <div class="result">
-            </div>
+<pre class="prettyprint linenums">var modules = [];
+user.modules(function(mods) {
+    modules = mods; // mods = Module[...]
+});</pre>
           </div>
 
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
+          <h3>Getting Data</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">var modId = modules[0].get("ID"); // ID of the 1st module in list</pre>
+          </div>
+
+          <h3>Update Module</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].update(); // update the data of the 1st module</pre>
+          </div>
+
+          <h3>Announcements</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].announcements(function(anns) {
+    // anns = [...]
+});</pre>
+          </div>
+
+          <h3>Workbins</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].workbins(function(bins) {
+    // bins = [...]
+});</pre>
+          </div>
+
+          <h3>Forums</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].forums(function(forums) {
+    // forums = [...]
+});</pre>
+          </div>
+
+          <h3>Webcasts</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].webcasts(function(webcasts) {
+    // webcasts = [...]
+});</pre>
+          </div>
+
+          <h3>Gradebook</h3>
+          <div class="demo">
+<pre class="prettyprint linenums">modules[0].gradebook(function(grades) {
+    // grades = [...]
+});</pre>
+          </div>
+
         </div> <!-- #module -->
       </div> <!-- span9 -->
 
       <div class="span2">
         <div id="affix-navbar">
           <ul class="nav nav-tabs nav-stacked" data-spy="affix">
-            <li class="active"><a href="#overview">Overview</a></li>
-            <li><a href="#download">Download</a></li>
-            <li><a href="#ivle">ivle</a></li>
-            <li><a href="#user">User</a></li>
-            <li><a href="#modules">Module</a></li>
+            <li class="active"><a href="#overview_sec">Overview</a></li>
+            <li><a href="#download_sec">Download</a></li>
+            <li><a href="#ivle_sec">ivle</a></li>
+            <li><a href="#user_sec">User</a></li>
+            <li><a href="#modules_sec">Module</a></li>
           </ul>
         </div>
       </div> <!-- span3 -->
@@ -141,10 +276,11 @@
 
     <!-- Le javascript
     ================================================== -->
-    <script src="js/store.min.js"></script>
+    <script src="js/prettify/prettify.js"></script>
     <script src="js/prettyprint.js"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/store.min.js"></script>
     <script src="../src/nus-ivle-api.js"></script>
     <script src="js/demo.js"></script>
 

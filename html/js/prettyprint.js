@@ -37,7 +37,7 @@ policies, either expressed or implied, of James Padolsey.
 
 */
 
-var prettyPrint = (function(){
+var prettyJson = (function(){
 	
 	/* These "util" functions are not part of the core
 	   functionality but are  all necessary - mostly DOM helpers */
