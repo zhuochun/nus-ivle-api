@@ -217,7 +217,10 @@
                 this.count = function() { return count; };
 
                 this.success = function(callback) {
-                    callback($.extend({"Comments": "Valid login!", "Results": [{"url": url}]}));
+                    callback({
+                        "Comments": "Valid login!",
+                        "Results": [{"url": url}]
+                    });
                 };
 
                 this.error = function(callback) {
@@ -232,7 +235,7 @@
             // create a user
             userA = ivle.User("key", "token");
             // create a module
-            modA  = userA.Module({"ID":123});
+            modA  = userA.Module({"ID":123, "Workbins": ["a"]});
         },
         teardown: function() {
             // return the original ajax
@@ -266,24 +269,8 @@
         });
     });
 
-    //test("update a individual module", function() {
-    //    var ajax = $.ajax({url:"empty"});
-
-    //    equal(ajax.count(), 1, "starting ajax count = 1");
-
-    //    stop();
-    //    modA.update();
-
-    //    setTimeout(function() {
-    //        start();
-    //        equal(modA._data.url, "https://ivle.nus.edu.sg/api/lapi.svc/Module?APIKey=key&AuthToken=token&Duration=0&IncludeAllInfo=true&CourseID=123&TitleOnly=false&output=json", "update module url");
-    //    }, 61000);
-    //
-    //    equal(ajax.count(), 2, "call to update modules -> ajax count = 2");
-    //});
-
     test("get gradebook in module", function() {
-        modA.gradebook(function(data) {
+        modA.gradebooksAsync(function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Gradebook_ViewItems?APIKey=key&AuthToken=token&CourseID=123&output=json",
                 "get module's gradebook url");
@@ -291,7 +278,7 @@
     });
 
     test("listA methods in module", function() {
-        var list = "information weblinks readingFormatted readingUnformatted reading".split(" ");
+        var list = "announcements forums workbins gradebooks polls weblinks descriptions".split(" ");
 
         // varify that all of them are defined function
         for (var i in list) {
@@ -299,11 +286,7 @@
         }
 
         // check one of them
-        modA.information(function(data) {
-            equal(data[0].url,
-                "https://ivle.nus.edu.sg/api/lapi.svc/Module_Information?APIKey=key&AuthToken=token&CourseID=123&output=json",
-                "get module information");
-        });
+        equal(modA.workbins(), "a", "get module workbin's 1st item");
     });
 
     test("listB methods in module", function() {
@@ -311,36 +294,37 @@
     
         // varify that all of them are defined function
         for (var i in list) {
-            equal(typeof modA[list[i]], "function", "expect method " + list[i] + " is defined");
+            equal(typeof modA[list[i] + "Async"], "function",
+                "expect method " + list[i] + "Async is defined");
         }
 
         // check their url
-        modA.announcements(function(data) {
+        modA.announcementsAsync(function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Announcements?APIKey=key&AuthToken=token&CourseID=123&Duration=0&TitleOnly=false&output=json",
                 "get module's announcement url");
         });
 
-        modA.workbins(function(data) {
+        modA.workbinsAsync(function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Workbins?APIKey=key&AuthToken=token&CourseID=123&Duration=0&TitleOnly=false&WorkbinID=&output=json",
                 "get module's workbins url");
         });
 
-        modA.forums(function(data) {
+        modA.forumsAsync(function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Forums?APIKey=key&AuthToken=token&CourseID=123&Duration=0&IncludeThreads=true&TitleOnly=false&output=json",
                 "get module's forums url");
         });
 
-        modA.webcasts(function(data) {
+        modA.webcastsAsync(function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Webcasts?APIKey=key&AuthToken=token&CourseID=123&Duration=0&output=json",
                 "get module's forums url");
         });
 
         // test one with additional options
-        modA.workbins({WorkbinID: 456}, function(data) {
+        modA.workbinsAsync({WorkbinID: 456}, function(data) {
             equal(data[0].url,
                 "https://ivle.nus.edu.sg/api/lapi.svc/Workbins?APIKey=key&AuthToken=token&CourseID=123&Duration=0&TitleOnly=false&WorkbinID=456&output=json",
                 "get module's workbin url with additional params");

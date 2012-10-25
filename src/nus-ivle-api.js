@@ -60,7 +60,7 @@
     }
 
     // Current version of the library. Keep in sync with `package.json`.
-    ivle.VERSION = '0.1.0';
+    ivle.VERSION = '0.2.0';
 
     // Get the token string from window.location
     ivle.getToken = function(href) {
@@ -231,7 +231,7 @@
             });
         },
 
-        gradebook: function(callback) {
+        gradebooksAsync: function(callback) {
             var self = this;
 
             this._user._get("Gradebook_ViewItems", {
@@ -242,34 +242,22 @@
         }
     };
 
-    var i, capitalize = function(str) { return str.slice(0,1).toUpperCase() + str.slice(1); },
-        listA = "information weblinks readingFormatted readingUnformatted reading".split(" "),
-        afun  = function(type) {
-            return function(callback) {
-                var self = this;
+    var modInfos = "announcements forums workbins webcasts gradebooks polls webLinks lecturers descriptions".split(" "),
+        capitalize = function(str) { return str.slice(0,1).toUpperCase() + str.slice(1); },
+        i, extendMod = function(key) { return function() { return this.get(key); }; };
 
-                this._user._get("Module_" + type, {
-                    CourseID: self.get("ID")
-                }).success(function(data) {
-                    callback(getResult(data));
-                });
-            };
-        };
-
-    for (i in listA) {
-        Module.prototype[listA[i]] = afun.apply(Module.prototype, [capitalize(listA[i])]);
+    for (i in modInfos) {
+        Module.prototype[modInfos[i].toLowerCase()] =
+            extendMod.apply(Module.prototype, [capitalize(modInfos[i])]);
     }
 
-    var listB = [
+    var modApi = [
             {api: "announcements", "options": {Duration: 0, TitleOnly: false}},
             {api: "workbins", "options": {Duration: 0, TitleOnly: false, WorkbinID: ""}},
             {api: "forums", "options": {Duration: 0, IncludeThreads: true, TitleOnly: false}},
             {api: "webcasts", "options": {Duration: 0}}
         ],
-        extendModuleB = function(i, f) {
-            Module.prototype[i.api] = f.apply(Module.prototype, [i]);
-        },
-        bfun = function(i) {
+        asyncFun = function(i) {
             return function(options, callback) {
                 if ($.isFunction(options)) {
                     callback = options;
@@ -280,15 +268,14 @@
                     opt = $.extend({CourseID: self.get("ID")}, i.options, options); 
 
                 this._user._get(capitalize(i.api), opt).success(function(data) {
-                    if (data.Comments === "Valid login!") {
-                        callback(data.Results);
-                    }
+                    callback(getResult(data));
                 });
             };
         };
 
-    for (i in listB) {
-        extendModuleB(listB[i], bfun);
+    for (i in modApi) {
+        Module.prototype[modApi[i].api + "Async"] = 
+            asyncFun.apply(Module.prototype, [modApi[i]]);
     }
 
 })(jQuery, window);
