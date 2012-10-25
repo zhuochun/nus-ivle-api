@@ -7,6 +7,8 @@ $(function() {
 
     // make code pretty
     window.prettyPrint && prettyPrint();
+    // set version
+    $(".version").html(ivle.VERSION);
 
     // variables
     var key, token = ivle.getToken(),
@@ -25,6 +27,10 @@ $(function() {
     // initial user if key and token exists
     if (key && token) {
         user = ivle.User(key, token);
+        // prefetch modules
+        setTimeout(function() {
+            user.modules(function(data) { modules = data; });
+        }, 3000);
     }
 
     // get token button
@@ -70,11 +76,6 @@ $(function() {
             window.alert("Please get the list of modules first.");
             return false;
         }
-        //} else if (isUserDefined()) {
-        //    $.when(user.modules(function(data) {
-        //        modules = data;
-        //    })).then(function() { result = true; });
-        //}
     }
 
     var demos = {
@@ -134,7 +135,7 @@ $(function() {
         "search_module": {
             check: isUserDefined,
             run: function(print) {
-                var type = "Modules", q = {AcadYear: "2012/2013", Semester: "2"};
+                var type = "Modules", q = {ModuleCode: "ACC1002"};
                 user.search(type, q, function(result) {
                     print(result);
                 });
@@ -158,41 +159,46 @@ $(function() {
         "module_ann": {
             check: isModuleDefined,
             run: function(print) {
-                print(modules[0].announcements(function(result) {
-                    print(result);
-                }));
+                modules[0].announcementsAsync(function(data) {
+                    print(data);
+                });
+                //print(modules[0].announcements());
             }
         },
         "module_workbin": {
             check: isModuleDefined,
             run: function(print) {
-                print(modules[0].workbins(function(result) {
-                    print(result);
-                }));
+                modules[0].workbinsAsync(function(data) {
+                    print(data);
+                });
+                //print(modules[0].workbins());
             }
         },
         "module_forum": {
             check: isModuleDefined,
             run: function(print) {
-                print(modules[0].forums(function(result) {
-                    print(result);
-                }));
+                modules[0].forumsAsync(function(data) {
+                    print(data);
+                });
+                //print(modules[0].forums());
             }
         },
         "module_webcast": {
             check: isModuleDefined,
             run: function(print) {
-                print(modules[0].webcasts(function(result) {
-                    print(result);
-                }));
+                modules[0].webcastsAsync(function(data) {
+                    print(data);
+                });
+                //print(modules[0].webcasts());
             }
         },
         "module_gradebook": {
             check: isModuleDefined,
             run: function(print) {
-                print(modules[0].gradebook(function(result) {
-                    print(result);
-                }));
+                modules[0].gradebooksAsync(function(data) {
+                    print(data);
+                });
+                //print(modules[0].gradebooks());
             }
         }
     };
@@ -212,6 +218,8 @@ $(function() {
 
             if (demo) {
                 if (demo.check()) {
+                    self.$result.html("fetching data...");
+
                     demo.run(function(output) {
                         if (typeof output === "string") {
                             self.$result.html(output);
@@ -221,13 +229,12 @@ $(function() {
                             }
 
                             self.$result.html(prettyObj(output,
-                                //JSON.parse(JSON.stringify(output)),
                                 {expanded: false, maxDepth: 20}));
                         }
                     });
                 }
             } else {
-                console.log("Error: demo #" + thisDemo + " is not defined");
+                self.$result.html("Error: demo #" + thisDemo + " is not defined");
             }
         });
 
@@ -237,6 +244,7 @@ $(function() {
             if (demo) {
                 if (demo.check()) {
                     demo.run(function(output) {
+                        window.$$ = output;
                         console.log(output);
                     });
                 }
