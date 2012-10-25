@@ -5,6 +5,10 @@
 
 $(function() {
 
+    // make code pretty
+    window.prettyPrint && prettyPrint();
+
+    // variables
     var key, token = ivle.getToken(),
         user, modules = [];
 
@@ -38,28 +42,217 @@ $(function() {
         }
     });
 
-    $("#username").on("click", function() {
-        $result = $(this).parent().find(".result");
+    // demo actions
+    function isKeyExists() {
+        if (key) {
+            return true;
+        } else if ((key = $.trim($("#key").val())) && key !== "") {
+            return true;
+        } else {
+            window.alert("You haven't enter your API Key.");
+            return false;
+        }
+    }
 
-        user.name(function(data) {
-            $result.html(data);
-        });
-    });
+    function isUserDefined() {
+        if (user) {
+            return true;
+        } else {
+            window.alert("Please make sure API Key and User Token is specified.");
+            return false;
+        }
+    }
 
-    $("#get-modules").on("click", function() {
-        $result = $(this).parent().find(".result");
+    function isModuleDefined() {
+        if (isUserDefined() && modules.length > 0) {
+            return true;
+        } else {
+            window.alert("Please get the list of modules first.");
+            return false;
+        }
+        //} else if (isUserDefined()) {
+        //    $.when(user.modules(function(data) {
+        //        modules = data;
+        //    })).then(function() { result = true; });
+        //}
+    }
 
-        user.modules(function(data) {
-            var i, table;
+    var demos = {
+        "login": {
+            check: isKeyExists,
+            run: function(print) {
+                print(ivle.login(key, location.href));
+            }
+        },
+        "get_token": {
+            check: isKeyExists,
+            run: function(print) {
+                var token = ivle.getToken();
+                print(token ? token : "null");
+            }
+        },
+        "validate_user": {
+            check: isUserDefined,
+            run: function(print) {
+                user.validate(function(result) {
+                    print(result.toString());
+                });
+            }
+        },
+        "username": {
+            check: isUserDefined,
+            run: function(print) {
+                user.name(function(result) {
+                    print(result.toString());
+                });
+            }
+        },
+        "user_id": {
+            check: isUserDefined,
+            run: function(print) {
+                user.id(function(result) {
+                    print(result.toString());
+                });
+            }
+        },
+        "user_email": {
+            check: isUserDefined,
+            run: function(print) {
+                user.email(function(result) {
+                    print(result.toString());
+                });
+            }
+        },
+        "unread_ann": {
+            check: isUserDefined,
+            run: function(print) {
+                user.unreadAnnouncements(function(result) {
+                    print(result);
+                });
+            }
+        },
+        "search_module": {
+            check: isUserDefined,
+            run: function(print) {
+                var type = "Modules", q = {AcadYear: "2012/2013", Semester: "2"};
+                user.search(type, q, function(result) {
+                    print(result);
+                });
+            }
+        },
+        "get_modules": {
+            check: isUserDefined,
+            run: function(print) {
+                user.modules(function(result) {
+                    modules = result;
+                    print(modules);
+                });
+            }
+        },
+        "get_module_data": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].get("CourseName"));
+            }
+        },
+        "module_ann": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].announcements(function(result) {
+                    print(result);
+                }));
+            }
+        },
+        "module_workbin": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].workbins(function(result) {
+                    print(result);
+                }));
+            }
+        },
+        "module_forum": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].forums(function(result) {
+                    print(result);
+                }));
+            }
+        },
+        "module_webcast": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].webcasts(function(result) {
+                    print(result);
+                }));
+            }
+        },
+        "module_gradebook": {
+            check: isModuleDefined,
+            run: function(print) {
+                print(modules[0].gradebook(function(result) {
+                    print(result);
+                }));
+            }
+        }
+    };
 
-            console.log(data);
+    function Demo(elem) {
+        this.$elem = $(elem);
 
-            for (i in data) {
-                table = prettyPrint(data[i], {expanded: false, maxDepth: 20});
-                
-                $result.append(table);
+        this.$elem.append('<div class="btn-group"><button class="btn btn-primary btn-run">Run</button><button class="btn btn-primary btn-console">Run in Console</button></div><div class="result"><span class="result-holder">// result here</span></div>');
+
+        var self = this,
+            thisDemo = this.$elem.data("demo");
+
+        this.$result = this.$elem.find(".result");
+
+        this.$elem.on("click", ".btn-run", function() {
+            var demo = demos[thisDemo];
+
+            if (demo) {
+                if (demo.check()) {
+                    demo.run(function(output) {
+                        if (typeof output === "string") {
+                            self.$result.html(output);
+                        } else {
+                            if ($.isArray(output) && output.length > 0)
+                                output = output[0];
+
+                            self.$result.html(prettyObj(
+                                JSON.parse(JSON.stringify(output)),
+                                {expanded: false, maxDepth: 20}));
+                        }
+                    });
+                }
+            } else {
+                console.log("Error: demo #" + thisDemo + " is not defined");
             }
         });
-    });
+
+        this.$elem.on("click", ".btn-console", function() {
+            var demo = demos[thisDemo];
+
+            if (demo) {
+                if (demo.check()) {
+                    demo.run(function(output) {
+                        console.log(output);
+                    });
+                }
+            } else {
+                console.log("Error: demo #" + thisDemo + " is not defined");
+            }
+        });
+    }
+
+    $.fn.demo = function() {
+        return this.each(function () {
+            if (!$(this).hasClass("norun") && !$.data(this, 'plugin_demo')) {
+                $.data(this, 'plugin_demo', new Demo(this));
+            }
+        });
+    };
+
+    $(".demo").demo();
 
 });

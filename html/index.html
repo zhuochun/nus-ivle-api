@@ -21,6 +21,7 @@
         margin: 18px 0 15px;
         padding: 39px 19px 14px;
         *padding-top: 19px;
+        word-wrap: break-word;
         background-color: #f0f0f0;
         border: 1px solid #ddd;
         -webkit-border-radius: 4px;
@@ -114,18 +115,11 @@
         <div id="ivle_sec" class="section">
           <h2>ivle</h2>
           <h3>Login</h3>
-          <div class="demo" id="demo-login">
+          <div class="demo" data-demo="login">
 <pre class="prettyprint linenums">ivle.login(key, redirectUrl); // return the login url</pre>
-            <div class="btn-group">
-              <button class="btn btn-primary btn-run">Run</button>
-              <button class="btn btn-primary btn-console">Run in Console</button>
-            </div>
-            <div class="result">
-                <span class="result-holder">// result here</span>
-            </div>
           </div>
           <h3>Get Token</h3>
-          <div class="demo">
+          <div class="demo" data-demo="get_token">
 <pre class="prettyprint linenums">ivle.getToken([url]); // return the token if it is found in location.href/url</pre>
           </div>
         </div><!-- #ivle -->
@@ -133,12 +127,12 @@
         <div id="user_sec" class="section">
           <h2>User</h2>
           <h3>Initial User</h3>
-          <div class="demo">
+          <div class="demo norun" data-demo="init_user">
 <pre class="prettyprint linenums">var user = ivle.User(key, token); // return a User instance</pre>
           </div>
 
           <h3>Validate User</h3>
-          <div class="demo">
+          <div class="demo" data-demo="validate_user">
 <pre class="prettyprint linenums">user.validate(function(result) {
     // result = true/false
 });</pre>
@@ -146,33 +140,33 @@
 
           <h3>Get User Identities</h3>
           <h4>Username</h4>
-          <div class="demo">
+          <div class="demo" data-demo="username">
 <pre class="prettyprint linenums">user.name(function(username) {
     // username = "WANG ZHUOCHUN"
 });</pre>
           </div>
           <h4>Matric Number</h4>
-          <div class="demo">
+          <div class="demo" data-demo="user_id">
 <pre class="prettyprint linenums">user.id(function(id) {
-    // id = "A0000000"
+    // id = "a0000000"
 });</pre>
           </div>
           <h4>Email Address</h4>
-          <div class="demo">
+          <div class="demo" data-demo="user_email">
 <pre class="prettyprint linenums">user.email(function(email) {
     // email = "xxx@nus.edu.sg"
 });</pre>
           </div>
 
           <h3>Unread Announcements</h3>
-          <div class="demo">
+          <div class="demo" data-demo="unread_ann">
 <pre class="prettyprint linenums">user.unreadAnnouncements(function(anns) {
     // anns = [...]
 });</pre>
           </div>
 
           <h3>Search</h3>
-          <div class="demo">
+          <div class="demo" data-demo="search_module">
 <pre class="prettyprint linenums">var type = "Modules", q = {AcadYear: "2012/2013", Semester: 2};
 user.search(type, q, function(result) {
     // result = [...]
@@ -199,7 +193,7 @@ q = {
           <h2>Modules</h2>
 
           <h3>Getting the Modules</h3>
-          <div class="demo">
+          <div class="demo" data-demo="get_modules">
 <pre class="prettyprint linenums">var modules = [];
 user.modules(function(mods) {
     modules = mods; // mods = Module[...]
@@ -207,45 +201,45 @@ user.modules(function(mods) {
           </div>
 
           <h3>Getting Data</h3>
-          <div class="demo">
-<pre class="prettyprint linenums">var modId = modules[0].get("ID"); // ID of the 1st module in list</pre>
+          <div class="demo" data-demo="get_module_data">
+<pre class="prettyprint linenums">var modId = modules[0].get("CourseName"); // course name of the 1st module in list</pre>
           </div>
 
           <h3>Update Module</h3>
-          <div class="demo">
+          <div class="demo norun" data-demo="module_update">
 <pre class="prettyprint linenums">modules[0].update(); // update the data of the 1st module</pre>
           </div>
 
           <h3>Announcements</h3>
-          <div class="demo">
+          <div class="demo" data-demo="module_ann">
 <pre class="prettyprint linenums">modules[0].announcements(function(anns) {
     // anns = [...]
 });</pre>
           </div>
 
           <h3>Workbins</h3>
-          <div class="demo">
+          <div class="demo" data-demo="module_workbin">
 <pre class="prettyprint linenums">modules[0].workbins(function(bins) {
     // bins = [...]
 });</pre>
           </div>
 
           <h3>Forums</h3>
-          <div class="demo">
+          <div class="demo" data-demo="module_forum">
 <pre class="prettyprint linenums">modules[0].forums(function(forums) {
     // forums = [...]
 });</pre>
           </div>
 
           <h3>Webcasts</h3>
-          <div class="demo">
+          <div class="demo" data-demo="module_webcast">
 <pre class="prettyprint linenums">modules[0].webcasts(function(webcasts) {
     // webcasts = [...]
 });</pre>
           </div>
 
           <h3>Gradebook</h3>
-          <div class="demo">
+          <div class="demo" data-demo="module_gradebook">
 <pre class="prettyprint linenums">modules[0].gradebook(function(grades) {
     // grades = [...]
 });</pre>
