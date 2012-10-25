@@ -13,7 +13,9 @@
     <style>
       body { padding-top: 90px; }
       h1 { color: #213C92; }
-      h2 { color: #1570A6; }
+      h2 { color: #C53727; }
+      h3 { color: #1570A6; margin-top: 30px; }
+      h4 { color: #686868; text-indent: 20px; }
       blockquote { color: #0072C6; }
       .section { padding: 30px 0 10px; }
       .result {
@@ -77,7 +79,7 @@
               &nbsp; &nbsp;
               <div class="input-prepend">
                 <span class="add-on">User Token</span>
-                <input class="span2" id="token" size="16" type="text" placeholder="Your Token" disabled>
+                <input class="span2" id="token" size="16" type="text" placeholder="Your User Token">
               </div>
             </form>
           </div><!--/.nav-collapse -->
@@ -95,21 +97,28 @@
         <div id="overview_sec" class="section">
           <h2>Overview</h2>
 
-          <p>This is a JavaScript SDK for NUS IVLE APIs.</p>
+          <p>This is the documentation for <a href="http://wiki.nus.edu.sg/display/ivlelapi/Summary" title="IVLE API site">NUS IVLE APIs</a> JavaScript SDK, Version <b class="version">0.0.0</b>.</p>
 
-          <p>Currently, Supported APIs inlcude:</p>
+          <p>It is derivied from my Firefox Add-on <a href="http://ivle.pen.io/" title="IVLE Helper">NUS IVLE Helper</a>, developed for my <em>UNFINISHED</em> IVLE WaNDER client-side website.</p>
 
-          <ul>
-              <li>Module</li>
-              <li>Module</li>
-              <li>Module</li>
-              <li>Module</li>
-          </ul>
+          <h3>Demos in following Sections</h3>
+
+          <p>Please remember to put your IVLE API key (get it at <a href="https://ivle.nus.edu.sg/LAPI/default.aspx" title="NUS IVLE page">IVLE page</a>) in the top right input box, and get your user token using your NUS account first.</p>
+          <p><span class="label label-important">Important</span> For all results, if the result is <code>Array</code>, only the first item will be displayed in <code>Run</code>. You can use <code>Run in Console</code> to access the complete result.</p>
+          <p><span class="label label-info">NOTE</span> If you <code>Run in Console</code>, you can always access the last data outputted in Console using <code>$$</code>.</p>
+
         </div> <!-- #overview -->
 
         <div id="download_sec" class="section">
           <h2>Download</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu. Nulla non quam erat, luctus consequat nisi. Integer hendrerit lacus sagittis erat fermentum tincidunt. Cras vel dui neque. In sagittis commodo luctus. Mauris non metus dolor, ut suscipit dui. Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum. Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor.</p>
+          <ul>
+            <li><a href="https://raw.github.com/Zhuochun/nus-ivle-api/master/dist/nus-ivle-api.min.js" title="Production">Production Version <span class="version"></span></a></li>
+            <li><a href="https://raw.github.com/Zhuochun/nus-ivle-api/master/dist/nus-ivle-api.js" title="Development">Development Version <span class="version"></span></a></li>
+            <li><a href="https://github.com/zhuochun/nus-ivle-api" title="Fork in GitHub">View in GitHub</a></li>
+          </ul>
+          <p>Found a issue, or any feedbacks, <a href="https://github.com/zhuochun/nus-ivle-api/issues">please file an issue here</a>.</p> 
+          <h3>License</h3>
+          <p>Copyright (c) 2012 Wang Zhuochun</br>Licensed under the MIT license.</p>
         </div> <!-- #download -->
 
         <div id="ivle_sec" class="section">
@@ -167,11 +176,13 @@
 
           <h3>Search</h3>
           <div class="demo" data-demo="search_module">
-<pre class="prettyprint linenums">var type = "Modules", q = {AcadYear: "2012/2013", Semester: 2};
+<pre class="prettyprint linenums">var type = "Modules", q = {ModuleCode: "ACC1002"};
 user.search(type, q, function(result) {
     // result = [...]
 });</pre>
-            <p>Allowed Query Params:</p>
+          </div>
+
+          <p>Allowed Query Params:</p>
 <pre class="prettyprint linenums">// must have at least one query param in search
 q = {
     ModuleCode: "ACC1002" // String
@@ -183,10 +194,6 @@ q = {
   , ModNameExact: false // Boolean
   , LecNameExact: false // Boolean
 };</pre>
-
-            <ul>
-            </ul>
-          </div>
         </div> <!-- #user -->
 
         <div id="modules_sec" class="section">
@@ -212,35 +219,46 @@ user.modules(function(mods) {
 
           <h3>Announcements</h3>
           <div class="demo" data-demo="module_ann">
-<pre class="prettyprint linenums">modules[0].announcements(function(anns) {
+<pre class="prettyprint linenums">// prefer this one 
+anns = modules[0].announcements();
+// or fetch from server
+modules[0].announcementsAsync(function(anns) {
     // anns = [...]
 });</pre>
           </div>
 
           <h3>Workbins</h3>
           <div class="demo" data-demo="module_workbin">
-<pre class="prettyprint linenums">modules[0].workbins(function(bins) {
+<pre class="prettyprint linenums">bins = modules[0].workbins();
+// or fetch from server
+modules[0].workbinsAsync(function(bins) {
     // bins = [...]
 });</pre>
           </div>
 
           <h3>Forums</h3>
           <div class="demo" data-demo="module_forum">
-<pre class="prettyprint linenums">modules[0].forums(function(forums) {
+<pre class="prettyprint linenums">forums = modules[0].forums();
+// or fetch from server
+modules[0].forumsAsync(function(forums) {
     // forums = [...]
 });</pre>
           </div>
 
           <h3>Webcasts</h3>
           <div class="demo" data-demo="module_webcast">
-<pre class="prettyprint linenums">modules[0].webcasts(function(webcasts) {
+<pre class="prettyprint linenums">webcasts = modules[0].webcasts();
+// or fetch from server
+modules[0].webcastsAsync(function(webcasts) {
     // webcasts = [...]
 });</pre>
           </div>
 
           <h3>Gradebook</h3>
           <div class="demo" data-demo="module_gradebook">
-<pre class="prettyprint linenums">modules[0].gradebook(function(grades) {
+<pre class="prettyprint linenums">grades = modules[0].gradebooks();
+// or fetch from server
+modules[0].gradebooksAsync(function(grades) {
     // grades = [...]
 });</pre>
           </div>
@@ -265,7 +283,7 @@ user.modules(function(mods) {
     </div> <!-- /container -->
 
     <div class="container" id="footer">
-      <p class="center">Version 0.1.0 - Copyright &copy; 2012 Wang Zhuochun; Licensed MIT</p>
+      <p class="center">Version <span class="version">0.0.0</span> - Copyright &copy; 2012 Wang Zhuochun; Licensed MIT</p>
     </div> <!-- #footer -->
 
     <!-- Le javascript
@@ -275,7 +293,7 @@ user.modules(function(mods) {
     <script src="js/jquery-1.8.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/store.min.js"></script>
-    <script src="https://raw.github.com/zhuochun/nus-ivle-api/master/src/nus-ivle-api.js"></script>
+    <script src="https://raw.github.com/zhuochun/nus-ivle-api/master/dist/nus-ivle-api.js"></script>
     <script src="js/demo.js"></script>
 
   </body>
