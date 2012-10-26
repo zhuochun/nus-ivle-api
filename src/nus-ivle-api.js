@@ -64,14 +64,8 @@
 
     // Get the token string from window.location
     ivle.getToken = function(href) {
-        var token
-          , result = (/\?token=(\w+)/ig).exec(href || window.location.href);
-
-        if (result) {
-            token = result[1];
-        }
-
-        return token;
+        var result = (/\?token=(\w+)/ig).exec(href || window.location.href);
+        return result ? result[1] : null;
     };
 
     // get the login url
