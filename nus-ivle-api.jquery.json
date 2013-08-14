@@ -2,23 +2,23 @@
   "name": "nus-ivle-api",
   "title": "NUS IVLE API JavaScript SDK",
   "description": "a JavaScript SDK for NUS IVLE API (http://wiki.nus.edu.sg/display/ivlelapi/Home)",
-  "version": "0.2.0",
-  "homepage": "https://github.com/Zhuochun/nus-ivle-api",
+  "version": "0.3.0",
+  "homepage": "https://github.com/zhuochun/nus-ivle-api",
   "author": {
     "name": "Wang Zhuochun",
     "email": "stone1551@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Zhuochun/nus-ivle-api.git"
+    "url": "git://github.com/zhuochun/nus-ivle-api.git"
   },
   "bugs": {
-    "url": "https://github.com/Zhuochun/nus-ivle-api/issues"
+    "url": "https://github.com/zhuochun/nus-ivle-api/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/Zhuochun/nus-ivle-api/blob/master/LICENSE-MIT"
+      "url": "https://github.com/zhuochun/nus-ivle-api/blob/master/LICENSE-MIT"
     }
   ],
   "dependencies": {

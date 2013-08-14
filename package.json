@@ -1,6 +1,7 @@
 {
   "name": "nus-ivle-api",
-  "version": "0.2.0",
+  "author": "Wang Zhuochun",
+  "version": "0.3.0",
   "engines": {
     "node": ">= 0.6.0"
   },
@@ -8,6 +9,9 @@
     "test": "grunt qunit"
   },
   "devDependencies": {
-    "grunt": "~0.3.15"
+    "grunt": "~0.4.1",
+    "grunt-contrib-qunit": "~0.2.2",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-concat": "~0.3.0"
   }
 }

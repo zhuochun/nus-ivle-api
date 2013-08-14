@@ -126,72 +126,6 @@
         equal(userA.TOKEN, "token", "token is not updated for failed Validation");
     });
 
-    test("get user id", function() {
-        var ajax = $.ajax({url:"empty"});
-
-        equal(ajax.count(), 1, "starting ajax count = 1");
-
-        userA.id(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserID_Get?APIKey=key&Token=token&output=json",
-                "get user id");
-        });
-
-        equal(ajax.count(), 2, "call to get id -> ajax count = 2");
-
-        userA.id(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserID_Get?APIKey=key&Token=token&output=json",
-                "get user id again");
-        });
-
-        equal(ajax.count(), 2, "call to get id is cached -> ajax count = 2");
-    });
-
-    test("get user name", function() {
-        var ajax = $.ajax({url:"empty"});
-
-        equal(ajax.count(), 1, "starting ajax count = 1");
-
-        userA.name(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserName_Get?APIKey=key&Token=token&output=json",
-                "get user name");
-        });
-
-        equal(ajax.count(), 2, "call to get name -> ajax count = 2");
-
-        userA.name(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserName_Get?APIKey=key&Token=token&output=json",
-                "get user name again");
-        });
-
-        equal(ajax.count(), 2, "call to get name is cached -> ajax count = 2");
-    });
-
-    test("get user email", function() {
-        var ajax = $.ajax({url:"empty"});
-
-        equal(ajax.count(), 1, "starting ajax count = 1");
-
-        userA.email(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserEmail_Get?APIKey=key&Token=token&output=json",
-                "get user email");
-        });
-
-        equal(ajax.count(), 2, "call to get email -> ajax count = 2");
-
-        userA.email(function(data) {
-            equal(data,
-                "https://ivle.nus.edu.sg/api/lapi.svc/UserEmail_Get?APIKey=key&Token=token&output=json",
-                "get user email again");
-        });
-
-        equal(ajax.count(), 2, "call to get email -> ajax count = 2");
-    });
-
     test("user download file", function() {
         equal(userA.download("s123"),
             "https://ivle.nus.edu.sg/api/downloadfile.ashx?APIKey=key&AuthToken=token&target=workbin&ID=s123",
@@ -253,10 +187,6 @@
                 "https://ivle.nus.edu.sg/api/lapi.svc/Modules_Search?APIKey=key&AuthToken=token&IncludeAllInfo=true&ModuleCode=AA&output=json",
                 "user modules search");
         });
-
-        userA.search("AAA", {ModuleCode: "AA"}, function(data) {
-            equal(data, null, "user modules search with unknown type");
-        });
     });
 
 
@@ -291,7 +221,7 @@
 
     test("listB methods in module", function() {
         var list = "announcements forums webcasts workbins".split(" ");
-    
+
         // varify that all of them are defined function
         for (var i in list) {
             equal(typeof modA[list[i] + "Async"], "function",
