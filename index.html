@@ -50,7 +50,7 @@
       #footer .center { text-align: center; color: #888; }
     </style>
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="js/prettify/prettify.css" rel="stylesheet">
+    <link href="vendor/prettify/prettify.css" rel="stylesheet">
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="favicon.ico">
@@ -99,7 +99,7 @@
 
           <p>This is the documentation for <a href="http://wiki.nus.edu.sg/display/ivlelapi/Summary" title="IVLE API site">NUS IVLE APIs</a> JavaScript SDK, Version <b class="version">0.0.0</b>.</p>
 
-          <p>It is derivied from my Firefox Add-on <a href="http://ivle.pen.io/" title="IVLE Helper">NUS IVLE Helper</a>, developed for my <em>UNFINISHED</em> IVLE WaNDER client-side website.</p>
+          <p>It is derivied from my Firefox Add-on <a href="http://ivle.pen.io/" title="IVLE Helper">NUS IVLE Helper</a>, developed for my <em>UNFINISHED</em> IVLE client-side website.</p>
 
           <h3>Demos in following Sections</h3>
 
@@ -136,8 +136,17 @@
         <div id="user_sec" class="section">
           <h2>User</h2>
           <h3>Initial User</h3>
-          <div class="demo norun" data-demo="init_user">
-<pre class="prettyprint linenums">var user = ivle.User(key, token); // return a User instance</pre>
+          <div class="demo" data-demo="init_user">
+<pre class="prettyprint linenums">var user = ivle.User(key, token); // return a User instance
+
+// you must init user, it will validate the user and query his/her profile
+user.init().done(function() {
+    // start doing things
+    // e.g. get user's profile
+    user.profile();
+    // e.g. or get a profile item
+    user.profile("Faculty"); // "Multi Disciplinary Programme"
+})</pre>
           </div>
 
           <h3>Validate User</h3>
@@ -147,23 +156,24 @@
 });</pre>
           </div>
 
-          <h3>Get User Identities</h3>
-          <h4>Username</h4>
-          <div class="demo" data-demo="username">
-<pre class="prettyprint linenums">user.name(function(username) {
-    // username = "WANG ZHUOCHUN"
-});</pre>
+          <h3>Get User Profile</h3>
+          <h4>All information</h4>
+          <div class="demo" data-demo="user_profile">
+<pre class="prettyprint linenums">var profile = user.profile();</pre>
           </div>
           <h4>Matric Number</h4>
           <div class="demo" data-demo="user_id">
-<pre class="prettyprint linenums">user.id(function(id) {
-    // id = "a0000000"
-});</pre>
+<pre class="prettyprint linenums">var id = user.profile("UserID");</pre>
           </div>
           <h4>Email Address</h4>
           <div class="demo" data-demo="user_email">
-<pre class="prettyprint linenums">user.email(function(email) {
-    // email = "xxx@nus.edu.sg"
+<pre class="prettyprint linenums">var email = user.profile("Email");</pre>
+          </div>
+
+          <h3>All modules taken</h3>
+          <div class="demo" data-demo="modules_taken">
+<pre class="prettyprint linenums">user.modulesTaken(function(mods) {
+    // mods = [...]
 });</pre>
           </div>
 
@@ -176,8 +186,8 @@
 
           <h3>Search</h3>
           <div class="demo" data-demo="search_module">
-<pre class="prettyprint linenums">var type = "Modules", q = {ModuleCode: "ACC1002"};
-user.search(type, q, function(result) {
+<pre class="prettyprint linenums">var params = {ModuleCode: "ACC1002"};
+user.search("Modules", params, function(result) {
     // result = [...]
 });</pre>
           </div>
@@ -264,6 +274,40 @@ modules[0].gradebooksAsync(function(grades) {
           </div>
 
         </div> <!-- #module -->
+
+        <div id="additions_sec" class="section">
+          <h2>Additions</h2>
+          <h3>Async functions</h3>
+
+          <p>Instead of passing in <code>callbacks</code> into functions, all functions return a <code>$.Deferred</code> object that you can also call with <code>done</code>, <code>success</code>, <code>error</code>. So you can more controls.</p>
+          <p>However, the result will be raw data. You can filter the data using <code>ivle.filterResult</code>.</p>
+
+          <div class="demo" data-demo="module_gradebook_raw">
+<pre class="prettyprint linenums">
+// instead of passing in a callback
+modules[0].gradebooksAsync(function(grades) {
+    // grades = [...]
+});
+
+// you can also do this
+modules[0].gradebooksAync().success(function(data) {
+    var grades = ivle.filterResult(data); // grades = [...]
+});
+</pre>
+          </div>
+
+          <h3>Extend APIs</h3>
+
+          <p>For APIs not provided, you can always call <code>user.get(api, params)</code>. If <code>params</code> are not required for a API, you need to pass in an empty object <code>{}</code>.</p>
+
+<pre class="prettyprint linenums">// for example, get all unread announcements
+user.get("Announcements_Unread", {TitleOnly: false})
+    .success(function(data) {
+        var anns = ivle.filterResult(data); // anns = [...]
+    });
+</pre>
+      </div> <!-- #additions -->
+
       </div> <!-- span9 -->
 
       <div class="span2">
@@ -274,6 +318,7 @@ modules[0].gradebooksAsync(function(grades) {
             <li><a href="#ivle_sec">ivle</a></li>
             <li><a href="#user_sec">User</a></li>
             <li><a href="#modules_sec">Module</a></li>
+            <li><a href="#additions_sec">Additions</a></li>
           </ul>
         </div>
       </div> <!-- span3 -->
@@ -288,12 +333,12 @@ modules[0].gradebooksAsync(function(grades) {
 
     <!-- Le javascript
     ================================================== -->
-    <script src="js/prettify/prettify.js"></script>
-    <script src="js/prettyprint.js"></script>
-    <script src="js/jquery-1.8.2.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/store.min.js"></script>
-    <script src="https://raw.github.com/zhuochun/nus-ivle-api/master/dist/nus-ivle-api.js"></script>
+    <script src="vendor/prettify/prettify.js"></script>
+    <script src="vendor/prettyprint.js"></script>
+    <script src="vendor/jquery-1.8.2.min.js"></script>
+    <script src="vendor/bootstrap.min.js"></script>
+    <script src="vendor/store.min.js"></script>
+    <script src="js/nus-ivle-api.js"></script>
     <script src="js/demo.js"></script>
 
     <!-- Le Google Analytics

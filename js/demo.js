@@ -6,31 +6,42 @@
 $(function() {
 
     // make code pretty
-    window.prettyPrint && prettyPrint();
+    if (window.prettyPrint) { prettyPrint(); }
     // set version
     $(".version").html(ivle.VERSION);
 
     // variables
-    var key, token = ivle.getToken(),
-        user, modules = [];
+    var key, token = ivle.getToken();
 
-    // check store, get key and token
-    if (key = store.get("key")) {
-        $("#key").val(key);
-    }
-    if (token) {
-        store.set("token", token);
-        $("#token").val(token);
-    } else if (token = store.get("token")) {
-        $("#token").val(token);
-    }
-    // initial user if key and token exists
-    if (key && token) {
-        user = ivle.User(key, token);
-        // prefetch modules
-        setTimeout(function() {
-            user.modules(function(data) { modules = data; });
-        }, 3000);
+    window.user = null;
+    window.modules = [];
+
+    initUser();
+
+    function initUser() {
+        // check store, get key and token
+        if ((key = store.get("key"))) {
+            $("#key").val(key);
+        }
+
+        if (token) {
+            store.set("token", token);
+            $("#token").val(token);
+        } else if ((token = store.get("token"))) {
+            $("#token").val(token);
+        }
+
+        // initial user if key and token exists
+        if (key && token) {
+            user = ivle.User(key, token);
+
+            return user.init().done(function() {
+                // prefetch modules
+                user.modules(function(data) { modules = data; });
+            });
+        }
+
+        return null;
     }
 
     // get token button
@@ -92,6 +103,24 @@ $(function() {
                 print(token ? token : "null");
             }
         },
+        "init_user": {
+            check: null,
+            run: function(print) {
+                var q;
+
+                if (isUserDefined) {
+                    print(user.profile());
+                } else {
+                    q = initUser();
+
+                    if (!q) {
+                        window.alert("Please make sure API Key and User Token is specified.");
+                    } else {
+                        q.done(print(user.profile()));
+                    }
+                }
+            }
+        },
         "validate_user": {
             check: isUserDefined,
             run: function(print) {
@@ -100,27 +129,29 @@ $(function() {
                 });
             }
         },
-        "username": {
+        "user_profile": {
             check: isUserDefined,
             run: function(print) {
-                user.name(function(result) {
-                    print(result.toString());
-                });
+                print(user.profile());
             }
         },
         "user_id": {
             check: isUserDefined,
             run: function(print) {
-                user.id(function(result) {
-                    print(result.toString());
-                });
+                print(user.profile("UserID"));
             }
         },
         "user_email": {
             check: isUserDefined,
             run: function(print) {
-                user.email(function(result) {
-                    print(result.toString());
+                print(user.profile("Email"));
+            }
+        },
+        "modules_taken": {
+            check: isUserDefined,
+            run: function(print) {
+                user.modulesTaken(function(result) {
+                    print(result);
                 });
             }
         },
@@ -200,6 +231,14 @@ $(function() {
                 });
                 //print(modules[0].gradebooks());
             }
+        },
+        "module_gradebook_raw": {
+            check: isModuleDefined,
+            run: function(print) {
+                modules[0].gradebooksAsync().success(function(data) {
+                    print(ivle.filterResult(data));
+                });
+            }
         }
     };
 
@@ -216,26 +255,24 @@ $(function() {
         this.$elem.on("click", ".btn-run", function() {
             var demo = demos[thisDemo];
 
-            if (demo) {
-                if (demo.check()) {
-                    self.$result.html("fetching data...");
+            if (!demo) { throw new Error("Error: demo #" + thisDemo + " is not defined"); }
 
-                    demo.run(function(output) {
-                        if (typeof output === "string") {
-                            self.$result.html(output);
-                        } else {
-                            if ($.isArray(output) && output.length > 0) {
-                                output = output[0];
-                            }
+            if (demo.check && !demo.check()) { return ; }
 
-                            self.$result.html(prettyObj(output,
-                                {expanded: false, maxDepth: 20}));
-                        }
-                    });
+            self.$result.html("fetching data...");
+
+            demo.run(function(output) {
+                if (typeof output === "string") {
+                    self.$result.html(output);
+                } else {
+                    if ($.isArray(output) && output.length > 0) {
+                        output = output[0];
+                    }
+
+                    self.$result.html(prettyObj(output,
+                        {expanded: false, maxDepth: 20}));
                 }
-            } else {
-                self.$result.html("Error: demo #" + thisDemo + " is not defined");
-            }
+            });
         });
 
         this.$elem.on("click", ".btn-console", function() {
