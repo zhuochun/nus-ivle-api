@@ -28,6 +28,7 @@
         },
 
     // Generate uri for IVLE api
+    // Note: make sure params exists if use AuthToken
         uri = function(key, token, api, params) {
             return apiUrl + api + "?APIKey=" + key +
                 (params === undefined ?  "&Token=" + token :
@@ -35,14 +36,19 @@
                         "&output=json";
         },
 
-    // Get the result [] from data, null if comments is invalid
+    // Get the actual result from data return, null if data is invalid
         getResult = function(data) {
-            if (data.Comments === "Valid login!" ||
-                data.Comments === "" /* in WebCasts/Workbin return empty string! */) {
+            if (data && (data.Comments === "Valid login!" ||
+                         data.Comments === "" /* in WebCasts/Workbin return empty string! */)) {
                 return data.Results;
             } else {
                 return null;
             }
+        },
+
+    // process the query if callback is provided
+        processQuery = function(query, callback) {
+            return callback ? query.success(function(d) { callback(getResult(d)); }) : query;
         },
 
 /* ========================================
@@ -60,7 +66,7 @@
     }
 
     // Current version of the library. Keep in sync with `package.json`.
-    ivle.VERSION = '0.2.0';
+    ivle.VERSION = '0.3.0';
 
     // Get the token string from window.location
     ivle.getToken = function(href) {
@@ -72,6 +78,9 @@
     ivle.login = function(key, redirectUrl) {
         return baseUrl + "login/?apikey=" + key + "&url=" + encodeURIComponent(redirectUrl);
     };
+
+    // filter the result
+    ivle.filterResult = getResult;
 
     // generate user
     ivle.User = function(key, token) {
@@ -90,43 +99,34 @@
     User.prototype = {
         constructor: User,
 
-        _get: function(api, params) {
-            return jsonp(uri(this.KEY, this.TOKEN, api, params));
+        init: function() {
+            var self = this;
+
+            return $.when(self.validate(), self.get("Profile_View", {}))
+                    .done(function(arg1, arg2) {
+                        self.data = getResult(arg2[0])[0];
+                    });
         },
 
-        _identity: function(api, local, callback) {
-            var self = this;
-            // if cached variable
-            if (this[local]) {
-                callback(this[local]);
-            } else {
-                return this._get(api).success(function(data) {
-                    callback((self[local] = data));
-                });
-            }
+        get: function(api, params) {
+            return jsonp(uri(this.KEY, this.TOKEN, api, params));
         },
 
         validate: function(callback) {
             var self = this;
 
-            return this._get("Validate").success(function(data) {
+            return this.get("Validate").success(function(data) {
+                // update the token
                 if (data.Success && data.Token !== self.TOKEN) {
                     self.TOKEN = data.Token;
                 }
-                callback(data.Success);
+
+                if (callback) { callback(data.Success); }
             });
         },
 
-        id: function(callback) {
-            this._identity("UserID_Get", "_id", callback);
-        },
-
-        name: function(callback) {
-            this._identity("UserName_Get", "_name", callback);
-        },
-
-        email: function(callback) {
-            this._identity("UserEmail_Get", "_email", callback);
+        profile: function(key) {
+            return key ? this.data[key] : this.data;
         },
 
         Module: function(data) {
@@ -140,39 +140,46 @@
             }
 
             var self = this,
-                opt = $.extend({Duration: 0, IncludeAllInfo: true}, options);
+                opt = $.extend({Duration: 0, IncludeAllInfo: true}, options),
+                query = this.get("Modules", opt),
+                createModules = function(data) {
+                    var m, modules = [], result = getResult(data);
 
-            this._get("Modules", opt).success(function(data) {
-                var m, modules = [], result = getResult(data);
+                    if (result) {
+                        for (m in result) {
+                            modules.push(new Module(self, result[m]));
+                        }
 
-                if (result) {
-                    for (m in result) {
-                        modules.push(new Module(self, result[m]));
+                        callback(modules);
+                    } else {
+                        callback(result);
                     }
+                };
 
-                    callback(modules);
-                } else {
-                    callback(result);
-                }
-            });
+            return callback ? query.success(createModules) : query;
+        },
+
+        modulesTaken: function(callback) {
+            var self = this,
+                query = this.get("Modules_Taken", {StudentId: self.profile("UserID")});
+
+            return processQuery(query, callback);
         },
 
         unreadAnnouncements: function(callback) {
-            this._get("Announcements_Unread", {TitleOnly: false})
-                .success(function(data) {
-                    callback(getResult(data));
-                });
+            var query = this.get("Announcements_Unread", {TitleOnly: false});
+
+            return processQuery(query, callback);
         },
 
-        search: function(type, q, callback) {
-            var opt = $.extend({IncludeAllInfo: true}, q);
+        search: function(type, options, callback) {
+            var opt = $.extend({IncludeAllInfo: true}, options),
+                query = this.get("Modules_Search", opt);
 
             if (type === "Modules") {
-                this._get("Modules_Search", opt).success(function(data) {
-                    callback(getResult(data));
-                });
+                return processQuery(query, callback);
             } else {
-                callback(null);
+                throw new Error("Search invalid type");
             }
         },
 
@@ -210,7 +217,7 @@
         update: function() {
             var self = this;
 
-            this._user._get("Module", {
+            this._user.get("Module", {
                 Duration: 0,
                 IncludeAllInfo: true,
                 CourseID: self.get("ID"),
@@ -226,13 +233,12 @@
         },
 
         gradebooksAsync: function(callback) {
-            var self = this;
+            var self = this,
+                query = this._user.get("Gradebook_ViewItems", {
+                            CourseID: self.get("ID")
+                        });
 
-            this._user._get("Gradebook_ViewItems", {
-                CourseID: self.get("ID")
-            }).success(function(data) {
-                callback(getResult(data));
-            });
+            return processQuery(query, callback);
         }
     };
 
@@ -259,11 +265,10 @@
                 }
 
                 var self = this,
-                    opt = $.extend({CourseID: self.get("ID")}, i.options, options); 
+                    opt = $.extend({CourseID: self.get("ID")}, i.options, options),
+                    query = this._user.get(capitalize(i.api), opt);
 
-                this._user._get(capitalize(i.api), opt).success(function(data) {
-                    callback(getResult(data));
-                });
+                return processQuery(query, callback);
             };
         };
 

@@ -100,11 +100,12 @@
         constructor: User,
 
         init: function() {
-            this.validate();
+            var self = this;
 
-            return this.get("Profile_View", {}).success(function(data) {
-                        this.data = data[0];
-                    }.bind(this));
+            return $.when(self.validate(), self.get("Profile_View", {}))
+                    .done(function(arg1, arg2) {
+                        self.data = getResult(arg2[0])[0];
+                    });
         },
 
         get: function(api, params) {
@@ -125,7 +126,7 @@
         },
 
         profile: function(key) {
-            return this.data[key];
+            return key ? this.data[key] : this.data;
         },
 
         Module: function(data) {
@@ -159,12 +160,15 @@
         },
 
         modulesTaken: function(callback) {
-            var query = this.get("Modules_Taken", {});
+            var self = this,
+                query = this.get("Modules_Taken", {StudentId: self.profile("UserID")});
+
             return processQuery(query, callback);
         },
 
         unreadAnnouncements: function(callback) {
             var query = this.get("Announcements_Unread", {TitleOnly: false});
+
             return processQuery(query, callback);
         },
 
