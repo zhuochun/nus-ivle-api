@@ -6,22 +6,24 @@
 $(function() {
 
     // make code pretty
-    window.prettyPrint && prettyPrint();
+    if (window.prettyPrint) { prettyPrint(); }
     // set version
     $(".version").html(ivle.VERSION);
 
     // variables
-    var key, token = ivle.getToken(),
-        user, modules = [];
+    var key, token = ivle.getToken();
+
+    window.user = null;
+    window.modules = [];
 
     // check store, get key and token
-    if (key = store.get("key")) {
+    if ((key = store.get("key"))) {
         $("#key").val(key);
     }
     if (token) {
         store.set("token", token);
         $("#token").val(token);
-    } else if (token = store.get("token")) {
+    } else if ((token = store.get("token"))) {
         $("#token").val(token);
     }
     // initial user if key and token exists
